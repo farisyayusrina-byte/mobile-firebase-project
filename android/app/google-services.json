@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "860788680711",
+    "project_id": "splitmate-mobile",
+    "storage_bucket": "splitmate-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860788680711:android:125fb404d76e78e79c62a2",
+        "android_client_info": {
+          "package_name": "com.example.splitmate_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCa-NNPj4rfzpVhovbawPt-t9v8jS-uQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

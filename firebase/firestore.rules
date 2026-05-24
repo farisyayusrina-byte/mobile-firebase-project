@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      // Signed-in users can read profiles (find friends by email).
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+
+      match /notifications/{notificationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    match /fcm_outbox/{docId} {
+      allow create: if request.auth != null
+        && request.resource.data.fromUserId == request.auth.uid
+        && request.resource.data.toUserId is string
+        && request.resource.data.toUserId != request.auth.uid;
+      allow read: if request.auth != null
+        && (resource.data.fromUserId == request.auth.uid
+          || resource.data.toUserId == request.auth.uid);
+      allow update, delete: if false;
+    }
+
+    match /groups/{groupId} {
+      allow read: if request.auth != null
+        && request.auth.uid in resource.data.memberIds;
+      allow create: if request.auth != null
+        && request.auth.uid in request.resource.data.memberIds
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if request.auth != null
+        && request.auth.uid in resource.data.memberIds;
+      allow delete: if request.auth != null
+        && resource.data.createdBy == request.auth.uid;
+    }
+
+    match /bills/{billId} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid
+        || (
+          resource.data.groupId != null
+          && request.auth.uid in get(
+            /databases/$(database)/documents/groups/$(resource.data.groupId)
+          ).data.memberIds
+        )
+      );
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+  }
+}
